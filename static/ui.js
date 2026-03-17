@@ -33,39 +33,26 @@ function Config() {
     :modal[open] {
         animation: fade 0.4s ease normal;
     }
-
     :modal::backdrop {
-     backdrop-filter: blur(3px);
-    }
-
-    .buttons {
-      gap: 0.5em;
+      backdrop-filter: blur(3px);
     }
     .buttons button {
-      border: 1px solid #4c8bf5;
-      background-color: #313131;
-      border-radius: 0.75em;
-      color: #fff;
+      border: 2px solid;
+      border-color: #ffffff #808080 #808080 #ffffff;
+      background-color: #c0c0c0;
+      color: #000;
       padding: 0.45em;
     }
+    .buttons button:active {
+      border-color: #808080 #ffffff #ffffff #808080;
+    }
     .input_row input {
-      background-color: rgb(18, 18, 18);
-      border: 2px solid rgb(49, 49, 49);
-      border-radius: 0.75em;
-      color: #fff;
+      background-color: #fff;
+      border: 2px solid;
+      border-color: #808080 #ffffff #ffffff #808080;
+      color: #000;
       outline: none;
       padding: 0.45em;
-    }
-    .input_row {
-      margin-bottom: 0.5em;
-      margin-top: 0.5em;
-    }
-    .input_row input {
-      flex-grow: 1;
-    }
-    .centered {
-      justify-content: center;
-      align-items: center;
     }
   `;
 
@@ -78,38 +65,41 @@ function Config() {
 	}
 
 	return html`
-      <dialog class="cfg" style="background-color: #121212; color: white; border-radius: 8px;">
-        <div style="align-self: end">
-          <div class=${[flex, "buttons"]}>
-            <button on:click=${() => {
+      <dialog class="cfg" style="background-color: #c0c0c0; color: black; border: 2px solid; border-color: #ffffff #808080 #808080 #ffffff; padding: 2px; width: 350px;">
+        <div style="background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 3px 10px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between;">
+            <span>Settings</span>
+        </div>
+        <div style="padding: 1em;">
+            <div class=${[flex, "buttons"]} style="margin-bottom: 1em; gap: 5px;">
+                <button on:click=${() => {
 							connection.setTransport("/baremod/index.mjs", [store.bareurl]);
 							store.transport = "/baremod/index.mjs";
-						}}>use bare server 3</button>
-            <button on:click=${() => {
+						}}>Bare 3</button>
+                <button on:click=${() => {
 							connection.setTransport("/libcurl/index.mjs", [
 								{ wisp: store.wispurl },
 							]);
 							store.transport = "/libcurl/index.mjs";
-						}}>use libcurl.js</button>
-              <button on:click=${() => {
+						}}>Libcurl</button>
+                  <button on:click=${() => {
 								connection.setTransport("/epoxy/index.mjs", [
 									{ wisp: store.wispurl },
 								]);
 								store.transport = "/epoxy/index.mjs";
-							}}>use epoxy</button>
-          </div>
-        </div>
-        <div class=${[flex, col, "input_row"]}>
-          <label for="wisp_url_input">Wisp URL:</label>
-          <input id="wisp_url_input" bind:value=${use(store.wispurl)} spellcheck="false"></input>
-        </div>
-        <div class=${[flex, col, "input_row"]}>
-          <label for="bare_url_input">Bare URL:</label>
-          <input id="bare_url_input" bind:value=${use(store.bareurl)} spellcheck="false"></input>
-        </div>
-        <div>${use(store.transport)}</div>
-        <div class=${[flex, "buttons", "centered"]}>
-          <button on:click=${() => handleModalClose(this.root)}>close</button>
+							}}>Epoxy</button>
+            </div>
+            <div class=${[flex, col, "input_row"]}>
+              <label style="font-size: 11px;">Wisp URL:</label>
+              <input bind:value=${use(store.wispurl)} spellcheck="false"></input>
+            </div>
+            <div class=${[flex, col, "input_row"]} style="margin-top: 5px;">
+              <label style="font-size: 11px;">Bare URL:</label>
+              <input bind:value=${use(store.bareurl)} spellcheck="false"></input>
+            </div>
+            <div style="font-size: 10px; margin: 10px 0;">Active: ${use(store.transport)}</div>
+            <div class=${[flex, "buttons"]} style="justify-content: center;">
+              <button on:click=${() => handleModalClose(this.root)}>OK</button>
+            </div>
         </div>
       </dialog>
   `;
@@ -119,85 +109,65 @@ function BrowserApp() {
 	this.css = `
     width: 100%;
     height: 100%;
-    color: #e0def4;
     display: flex;
     flex-direction: column;
-    padding: 0.5em;
-    padding-top: 0;
     box-sizing: border-box;
-
-    a {
-      color: #e0def4;
-    }
-
-    input,
-    button {
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-        sans-serif;
-    }
-    .version {
-    }
-    h1 {
-      font-family: "Inter Tight", "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-      sans-serif;
-      margin-bottom: 0;
-    }
+    
     iframe {
       background-color: #fff;
-      border: none;
-      border-radius: 0.3em;
+      border: 2px solid;
+      border-color: #808080 #ffffff #ffffff #808080;
       flex: 1;
       width: 100%;
     }
 
-    input.bar {
-      font-family: "Inter";
-      padding: 0.1em;
-      padding-left: 0.3em;
-      border: none;
-      outline: none;
-      color: #fff;
-      height: 1.5em;
-      border-radius: 0.3em;
-      flex: 1;
-
-      background-color: #121212;
-      border: 1px solid #313131;
-    }
-    .input_row > label {
-      font-size: 0.7rem;
-      color: gray;
-    }
-    p {
-      margin: 0;
-      margin-top: 0.2em;
-    }
-
     .nav {
-      padding-top: 0.3em;
-      padding-bottom: 0.3em;
-      gap: 0.3em;
-    }
-    spacer {
-      margin-left: 10em;
+      padding: 5px;
+      gap: 5px;
+      background-color: #c0c0c0;
     }
 
     .nav button {
-      color: #fff;
+      border: 2px solid;
+      border-color: #ffffff #808080 #808080 #ffffff;
+      background-color: #c0c0c0;
+      padding: 2px 8px;
+      color: black;
+      font-family: "MS Sans Serif", "Tahoma", sans-serif;
+      cursor: pointer;
+    }
+
+    .nav button:active {
+      border-color: #808080 #ffffff #ffffff #808080;
+    }
+
+    input.bar {
+      border: 2px solid;
+      border-color: #808080 #ffffff #ffffff #808080;
+      padding: 2px 6px;
+      flex: 1;
       outline: none;
-      border: none;
-      border-radius: 0.30em;
-      background-color: #121212;
-      border: 1px solid #313131;
+      color: black;
     }
   `;
+  
 	this.url = store.url;
-
 	const frame = scramjet.createFrame();
 
 	this.mount = () => {
 		let body = btoa(
-			`<body style="background: #000; color: #fff">Welcome to <i>Scramjet</i>! Type in a URL in the omnibox above and press enter to get started.</body>`
+			`<body style="background-color: #008080; background-image: url('https://i.pinimg.com/736x/a7/a2/0e/a7a20e9a4c0c5ed6af6cbaf3c268d701.jpg'); background-size: cover; background-position: center; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'MS Sans Serif', Tahoma, sans-serif;">
+          <div style="background-color: #c0c0c0; border: 2px solid; border-color: #dfdfdf #000000 #000000 #dfdfdf; padding: 2px; text-align: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.5);">
+              <div style="background: #000080; color: white; padding: 3px 5px; font-weight: bold; font-size: 12px; text-align: left;">
+                  Welcome
+              </div>
+              <div style="padding: 30px 50px;">
+                  <h1 style="font-size: 5em; margin: 0; color: #000; text-shadow: 2px 2px 0px #fff;">95 OS</h1>
+                  <div style="height: 2px; background: #808080; border-bottom: 1px solid #ffffff; margin: 15px 0;"></div>
+                  <p style="font-size: 14px; color: #000; margin-top: 10px;">Type a URL or search above to begin.</p>
+              </div>
+          </div>
+       </body>`
 		);
 		frame.go(`data:text/html;base64,${body}`);
 	};
@@ -208,43 +178,44 @@ function BrowserApp() {
 	});
 
 	const handleSubmit = () => {
-		this.url = this.url.trim();
-		//  frame.go(this.url)
-		if (!this.url.startsWith("http")) {
-			this.url = "https://" + this.url;
+		let input = this.url.trim();
+		const searchEngine = "https://duckduckgo.com/?q=";
+
+		if (input.startsWith("http://") || input.startsWith("https://")) {
+			this.url = input;
+		} else if (input.includes(".") && !input.includes(" ")) {
+			this.url = "https://" + input;
+		} else {
+			this.url = searchEngine + encodeURIComponent(input);
 		}
 
+		store.url = this.url;
 		return frame.go(this.url);
 	};
 
 	const cfg = h(Config);
 	document.body.appendChild(cfg);
-	this.githubURL = `https://github.com/MercuryWorkshop/scramjet/commit/${$scramjetVersion.build}`;
 
 	return html`
-      <div>
-      <div class=${[flex, "nav"]}>
+      <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+        <div class=${[flex, "nav"]}>
+          <button on:click=${() => cfg.showModal()}>config</button>
+          <button on:click=${() => frame.back()}>&lt;-</button>
+          <button on:click=${() => frame.forward()}>-&gt;</button>
+          <button on:click=${() => frame.reload()}>&#x21bb;</button>
 
-        <button on:click=${() => cfg.showModal()}>config</button>
-        <button on:click=${() => frame.back()}>&lt;-</button>
-        <button on:click=${() => frame.forward()}>-&gt;</button>
-        <button on:click=${() => frame.reload()}>&#x21bb;</button>
+          <input class="bar" autocomplete="off" autocapitalize="off" autocorrect="off" 
+          bind:value=${use(this.url)} on:input=${(e) => {
+                      this.url = e.target.value;
+                  }} on:keyup=${(e) => e.keyCode == 13 && handleSubmit()}></input>
 
-        <input class="bar" autocomplete="off" autocapitalize="off" autocorrect="off" 
-        bind:value=${use(this.url)} on:input=${(e) => {
-					this.url = e.target.value;
-				}} on:keyup=${(e) => e.keyCode == 13 && (store.url = this.url) && handleSubmit()}></input>
-
-        <button on:click=${() => window.open(scramjet.encodeUrl(this.url))}>open</button>
-
-        <p class="version">
-          <b>scramjet</b> ${$scramjetVersion.version} <a href=${use(this.githubURL)}>${$scramjetVersion.build}</a>
-        </p>
+          <button on:click=${() => window.open(scramjet.encodeUrl(this.url))}>open</button>
+        </div>
+        ${frame.frame}
       </div>
-      ${frame.frame}
-    </div>
     `;
 }
+
 window.addEventListener("load", async () => {
 	const root = document.getElementById("app");
 	try {
@@ -253,27 +224,4 @@ window.addEventListener("load", async () => {
 		root.replaceWith(document.createTextNode("" + e));
 		throw e;
 	}
-	function b64(buffer) {
-		let binary = "";
-		const bytes = new Uint8Array(buffer);
-		const len = bytes.byteLength;
-		for (let i = 0; i < len; i++) {
-			binary += String.fromCharCode(bytes[i]);
-		}
-
-		return btoa(binary);
-	}
-	const arraybuffer = await (await fetch("/assets/scramjet.png")).arrayBuffer();
-	console.log(
-		"%cb",
-		`
-      background-image: url(data:image/png;base64,${b64(arraybuffer)});
-      color: transparent;
-      padding-left: 200px;
-      padding-bottom: 100px;
-      background-size: contain;
-      background-position: center center;
-      background-repeat: no-repeat;
-  `
-	);
 });
