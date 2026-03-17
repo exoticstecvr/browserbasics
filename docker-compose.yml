@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  scramjet:
+    build: .
+    container_name: scramjet
+    ports:
+      - "80:8080"
+    restart: always
