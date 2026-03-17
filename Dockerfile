@@ -1,4 +1,4 @@
-# Stage 1: Build
+# STEP 1: The Build Room (Heavy lifting)
 FROM node:22-slim AS builder
 RUN apt-get update && apt-get install -y git python3 make g++ && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm
@@ -8,10 +8,11 @@ RUN pnpm install
 COPY . .
 RUN pnpm run build
 
-# Stage 2: Run
+# STEP 2: The Run Room (Fast & Light)
 FROM node:22-slim
 RUN npm install -g pnpm
 WORKDIR /app
+# Only copy the built files from the builder
 COPY --from=builder /app .
 EXPOSE 1337
 CMD ["pnpm", "start"]
